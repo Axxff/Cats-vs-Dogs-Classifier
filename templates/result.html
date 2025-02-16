@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Classification Result</title>
+</head>
+<body>
+    <h1>Classification Result</h1>
+    <p>Result: <strong>{{ result }}</strong></p>
+    <p>Confidence: {{ confidence * 100 }}%</p>
+    <p>Cat Probability: {{ cat_prob * 100 }}%</p>
+    <p>Dog Probability: {{ dog_prob * 100 }}%</p>
+    <p>Neither Probability: {{ neither_prob * 100 }}%</p>
+    <br>
+    <a href="/">Go back</a>
+</body>
+</html>

@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cat vs Dog Classifier</title>
+    <link rel="stylesheet" href="static/styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>  <!-- For better alert boxes -->
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Cat vs Dog Image Classifier</h1>
+            <p>Upload an image of a cat or a dog, and let the AI classify it for you!</p>
+        </div>
+
+        <div class="upload-section">
+            <form id="uploadForm" enctype="multipart/form-data">
+                <input type="file" id="fileInput" name="image" accept="image/*" required>
+                <button type="submit" class="btn-upload">Upload Image</button>
+            </form>
+        </div>
+
+        <div class="result-section" style="display:none;">
+            <h2>Prediction Result</h2>
+            <div id="result"></div>
+            <div id="confidence"></div>
+            <div id="catProb"></div>
+            <div id="dogProb"></div>
+        </div>
+
+        <div class="image-section">
+            <h3>Uploaded Image</h3>
+            <img id="uploadedImage" style="max-width: 100%; border: 2px solid #ddd; border-radius: 10px;" />
+        </div>
+    </div>
+
+    <script src="static/script.js"></script>
+    <script>
+        document.getElementById('uploadForm').addEventListener('submit', function (e) {
+            e.preventDefault();  // Prevent form from submitting normally
+            
+            const formData = new FormData();
+            const fileInput = document.getElementById('fileInput');
+            
+            // Append the file to form data
+            formData.append('images', fileInput.files[0]);  // Ensure the key matches the Flask code
+            
+            // Show the uploaded image
+            const reader = new FileReader();
+            reader.onloadend = function() {
+                document.getElementById('uploadedImage').src = reader.result;
+            };
+            reader.readAsDataURL(fileInput.files[0]);
+    
+            // Send the form data to Flask
+            fetch('/classify', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    Swal.fire('Error', data.error, 'error');
+                } else {
+                    // Display prediction result
+                    document.querySelector('.result-section').style.display = 'block';
+                    document.getElementById('result').innerText = `Prediction: ${data.prediction}`;
+                    document.getElementById('confidence').innerText = `Confidence: ${data.confidence * 100}%`;
+                    document.getElementById('catProb').innerText = `Cat Probability: ${data.probabilities.cat * 100}%`;
+                    document.getElementById('dogProb').innerText = `Dog Probability: ${data.probabilities.dog * 100}%`;
+                }
+            })
+            .catch(error => {
+                Swal.fire('Error', 'Something went wrong. Please try again later.', 'error');
+            });
+        });
+    </script>    
+</body>
+</html>
