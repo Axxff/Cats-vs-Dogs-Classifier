@@ -1,0 +1,10 @@
+__pycache__/
+uploads/
+*.keras
+*.h5
+*.log
+logs/
+.DS_Store
+.env
+.vscode/
+.idea/
